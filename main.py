@@ -52,19 +52,27 @@ def Recipe_Add():
 def Recipe_View():
     Recipe_Name = str(input("Enter the name of the recipe you wish to view: "))
     Serving_Size = int(input("Enter the serving size of the recipe: "))
-    with open(f"Recipe App\{Recipe_Name}.csv") as File:
+    New_Amount_List = New_Amounts(Recipe_Name, Serving_Size)
+    with open(f"{Recipe_Name}.csv") as File:
+        Reader = csv.reader(File, delimiter=",")
+        New_Amount_List = New_Amounts(Recipe_Name, Serving_Size)
+        print(f"To make the recipe for {Recipe_Name} for {Serving_Size} people you will need.")
+        for Row in Reader:
+            for i in range(Row.__len__()):
+                if i in (np.arange(1, 100, 3)):
+                    print(New_Amount_List)
+                    print(f"{Row[i]}: {New_Amount_List[i-1]}{Row[i+2]}")
+            
+
+def New_Amounts(Recipe_Name, Serving_Size):
+    New_Amount_List = []
+    with open(f"{Recipe_Name}.csv") as File:
         Reader = csv.reader(File, delimiter=",")
         for Row in Reader:
-            print(Row)
-        New_Amounts(Recipe_Name)
-
-
-def New_Amounts(Recipe_Name):
-    New_Amount_List = []
-    with open(f"Recipe App\{Recipe_Name}.csv") as File:
-        Reader = csv.reader(File, delimiter=",")
-        print(np.arange(2, 100, 3))
-        for i in range(File.__len__()):
-            print(i)
+            for i in range(Row.__len__()):
+                if i in (np.arange(2, 100, 3)):
+                    New_Amount = int(Row[i])/int(Row[0])*Serving_Size
+                    New_Amount_List.append(New_Amount)
+        return(New_Amount_List)
 
 Main()
