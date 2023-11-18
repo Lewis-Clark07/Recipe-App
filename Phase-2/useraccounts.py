@@ -2,6 +2,7 @@ from tfa import Check
 import hashlib
 import re
 import maskpass
+import sqlite3
 
 global Password
 
@@ -40,14 +41,16 @@ def User_Sign_Up():
         User_Sign_Up()
     if Validate_Password(Password):
         if Password == Confirm_Password:
-            print(hashlib.sha256(Password.encode()).hexdigest())
+            Hash = hashlib.sha256(Password.encode()).hexdigest()
+            print(Hash)
         else:
             print("Passwords do not match please try again.")
             User_Sign_Up()
     else:
         print("Password is not strong enough please try again")
         User_Sign_Up()
-    FA_Code(Email)
+    if FA_Code(Email):
+        Add_User(First_Name, Last_Name, Email, Hash)
 
 def Validate_Password(Password):
     pattern = r"^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$"
@@ -64,8 +67,29 @@ def FA_Code(Email):
 
     User_Input = int(input("What is your 2fa code: "))
     if User_Input == Code:
-        print("Yes")
+        return True
     else: 
         print("That code is incorrect please try again")
         FA_Code(Email)
-Menu()  
+
+def Add_User(First_Name, Last_Name, Email, Hash):
+    conn = sqlite3.connect('userdata.db')
+    cursor = conn.cursor()
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            firstname TEXT,
+            lastname TEXT,
+            email TEXT,
+            password TEXT
+        )
+    ''')
+
+    user_data = (First_Name, Last_Name, Email, Hash)
+    print(user_data)
+    cursor.execute('''
+        INSERT INTO users (firstname, lastname, email, password)
+        VALUES (?, ?, ?, ?)
+    ''', user_data)
+
+Menu()

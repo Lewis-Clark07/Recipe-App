@@ -6,7 +6,7 @@ import smtplib
 def Check(User_Email):
     Code = random.randint(100000,999999)
 
-    App_Password = "armn pcgw zrow ocny"
+    App_Password = "temz annw ftkf gdyl"
     Email_Sender = "lewisclark857@gmail.com"
     Email_Reciever = User_Email
     
